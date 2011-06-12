@@ -1,0 +1,22 @@
+our dashboard:
+https://github.com/
+
+to commit new material:
+
+git add README
+// adds the file README to git control
+
+git commit -m 'first commit'
+//commits locally only
+
+
+git remote add origin git@github.com:RobotsSU/Spot.git
+git push -u origin master
+// commits to the server at github
+
+
+
+
+
+
+
