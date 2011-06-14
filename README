@@ -1,29 +1,8 @@
-our dashboard:
-https://github.com/
-
-Git Basics
-http://progit.org/book/ch1-3.html
-
-Get Started
-http://help.github.com/linux-set-up-git/
+This is the Spot project at Singularity University's Spot project.  A robot that will autonomously move or pick up things on the floor to the point where a roomba can vacuum the room.
 
 
 
-git remote add origin git@github.com:RobotsSU/Spot.git
-//this just needs to be done once
 
-
-to commit new material:
-
-git add README
-git commit -m 'first commit'
-//commits locally only
-
-git push -u origin master
-// commits to the server at github
-
-
-laptop modified again
 
 
 
