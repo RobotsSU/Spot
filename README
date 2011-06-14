@@ -1,29 +1,7 @@
-our dashboard:
-https://github.com/
+This is the kinect branch of the Spot project.
 
-Git Basics
-http://progit.org/book/ch1-3.html
-
-Get Started
-http://help.github.com/linux-set-up-git/
-
-
-
-git remote add origin git@github.com:RobotsSU/Spot.git
-//this just needs to be done once
-
-
-to commit new material:
-
-git add README
-git commit -m 'first commit'
-//commits locally only
-
-git push -u origin master
-// commits to the server at github
-
-
-kinect branch
+Here we are developing code that works with the kinect and provides navigation,
+localization, and object detection for Spot.
 
 
 
