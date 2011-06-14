@@ -1,0 +1,21 @@
+<package>
+  <description brief="face_detection_demos">
+
+     face_detection_demos
+
+  </description>
+  <author>dbarry</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/face_detection_demos</url>
+  <depend package="geometry_msgs"/>
+  <depend package="nav_msgs"/>
+  <depend package="tf"/>
+  <depend package="Aria"/>
+  <depend package="kinect_face_detection"/>
+  <depend package="people_msgs"/>
+  <depend package="sound_play"/>
+
+</package>
+
+

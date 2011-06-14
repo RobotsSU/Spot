@@ -1,0 +1,13 @@
+<!-- launch file for viewing kinect depth in greyscale or colors
+	run as
+	roslaunch depth_color depth_color.launch
+-->
+
+<launch>
+	<include file="$(find openni_camera)/launch/openni_node.launch" />
+
+    	<node pkg="depth_color" type="depth_to_color" name="depth_to_color" />
+		<param name="kinect_local_display" value="true" type="boolean"/>
+		<param name="kinect_use_color" value="true" type="boolean"/>
+
+</launch>

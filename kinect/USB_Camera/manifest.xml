@@ -1,0 +1,19 @@
+<package>
+  <description brief="USB_Camera">
+
+     USB_Camera
+
+  </description>
+  <author>Jenny</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/USB_Camera</url>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="sensor_msgs"/>
+  <depend package="image_transport"/>
+  <depend package="roscpp"/>
+
+</package>
+
+

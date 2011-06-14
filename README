@@ -1,6 +1,13 @@
 our dashboard:
 https://github.com/
 
+Git Basics
+http://progit.org/book/ch1-3.html
+
+Get Started
+http://help.github.com/linux-set-up-git/
+
+
 
 git remote add origin git@github.com:RobotsSU/Spot.git
 //this just needs to be done once

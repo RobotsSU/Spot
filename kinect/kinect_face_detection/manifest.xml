@@ -1,0 +1,29 @@
+<package>
+  <description brief="kinect_face_detection">
+
+     kinect_face_detection
+
+  </description>
+  <author>dbarry</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/kinect_face_detection</url>
+  <depend package="kinect_camera"/>
+  <depend package="face_detector"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="std_srvs"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="stereo_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="tf"/>
+  <depend package="actionlib_msgs"/>
+  <depend package="actionlib"/>
+  <depend package="image_geometry"/>
+  <depend package="pcl"/>
+
+</package>
+
+

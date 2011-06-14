@@ -1,0 +1,8 @@
+<package>
+<description>ROS node</description>
+<author>Dan Barry</author>
+<license>BSD</license>
+<depend package="roscpp" />
+<depend package="std_msgs" />
+</package>
+

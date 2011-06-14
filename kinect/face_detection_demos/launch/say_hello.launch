@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="sound_play" type="soundplay_node.py" name="soundplay_node"/>
+	<node pkg="face_detection_demos" type="say_hello" name="say_hello"/>
+</launch>

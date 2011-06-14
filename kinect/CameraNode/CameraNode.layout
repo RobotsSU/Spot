@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="src/CamerasConsole.cpp" open="1" top="1" tabpos="4">
+		<Cursor position="2653" topLine="12" />
+	</File>
+	<File name="src/CamerasConsole.h" open="1" top="0" tabpos="1">
+		<Cursor position="58" topLine="3" />
+	</File>
+	<File name="src/Eye.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="3392" topLine="52" />
+	</File>
+	<File name="src/Eye.h" open="1" top="0" tabpos="2">
+		<Cursor position="399" topLine="0" />
+	</File>
+	<File name="src/main.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="843" topLine="0" />
+	</File>
+	<File name="src/nodeCameras.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="2059" topLine="36" />
+	</File>
+	<File name="src/nodeCameras.h" open="1" top="0" tabpos="3">
+		<Cursor position="272" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

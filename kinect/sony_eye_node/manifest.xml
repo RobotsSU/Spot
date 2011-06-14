@@ -1,0 +1,18 @@
+<package>
+  <description brief="sony_eye_node">
+
+     sony_eye_node
+
+  </description>
+  <author>dbarry</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/sony_eye_node</url>
+  <depend package="roscpp"/>
+  <depend package="image_transport"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <rosdep name="wxwidgets"/>
+</package>
+
+

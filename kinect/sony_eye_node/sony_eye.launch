@@ -1,0 +1,7 @@
+<launch>
+	<node name="sony_eye_node" pkg="sony_eye_node" type="sony_eye_node" />
+	<node name="framegrab_client" pkg="sony_eye_node" type="framegrab_client" />
+	<node name="stereo_proc" pkg="stereo_image_proc" type="stereo_image_proc" ns="sony_eye" >
+		<param name="disparity_range" type="int" value="128"/>
+	</node>
+</launch>

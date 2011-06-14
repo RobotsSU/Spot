@@ -1,0 +1,20 @@
+<package>
+  <description brief="depth_color">
+
+     depth_color
+
+  </description>
+  <author>Jenny</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/depth_color</url>
+  <depend package="openni_camera"/>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <depend package="pcl"/>
+  <depend package="cv_bridge"/>
+  <depend package="opencv2"/>
+
+</package>
+
+
