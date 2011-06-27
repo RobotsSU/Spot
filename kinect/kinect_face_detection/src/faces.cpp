@@ -4,14 +4,14 @@
  **********************************************************************
  *
  * Software License Agreement (BSD License)
- * 
+ *
  *  Copyright (c) 2008, Willow Garage, Inc.
  *  All rights reserved.
- * 
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
- * 
+ *
  *   * Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *   * Redistributions in binary form must reproduce the above
@@ -21,7 +21,7 @@
  *   * Neither the name of the Willow Garage nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -38,14 +38,14 @@
 
 /* Author: Caroline Pantofaru */
 
-#include "kinect_face_detection/faces.h"
+#include "../include/kinect_face_detection/faces.h"
 #include <cfloat>
 #include <math.h>
 
 namespace people {
 
 Faces::Faces():
-  list_(NULL), 
+  list_(NULL),
   cam_model_(NULL) {
 }
 
@@ -63,9 +63,9 @@ Faces::~Faces() {
 }
 
 
-/* Note: The multi-threading in this file is left over from a previous incarnation that allowed multiple 
- * cascades to be run at once. It hasn't been removed in case we want to return to that model, and since 
- * there isn't much overhead. Right now, however, only one classifier is being run per instantiation 
+/* Note: The multi-threading in this file is left over from a previous incarnation that allowed multiple
+ * cascades to be run at once. It hasn't been removed in case we want to return to that model, and since
+ * there isn't much overhead. Right now, however, only one classifier is being run per instantiation
  * of the face_detector node.
  */
 
@@ -80,7 +80,7 @@ void Faces::initFaceDetection(uint num_cascades, string haar_classifier_filename
 
   face_go_mutex_ = new boost::mutex();
   bool cascade_ok = cascade_.load(haar_classifier_filename);
-  
+
   if (!cascade_ok) {
     ROS_ERROR_STREAM("Cascade file " << haar_classifier_filename << " doesn't exist.");
     return;
@@ -90,15 +90,15 @@ void Faces::initFaceDetection(uint num_cascades, string haar_classifier_filename
 
 /////
 
-vector<Box2D3D> Faces::detectAllFaces(cv::Mat &image, double threshold, 
-				      image_geometry::PinholeCameraModel 
+vector<Box2D3D> Faces::detectAllFaces(cv::Mat &image, double threshold,
+				      image_geometry::PinholeCameraModel
 				      *cam_model,
 				      const PointCloudXYZ &cloud) {
 
   faces_.clear();
 
   // Convert the image to grayscale, if necessary.
-  
+
   if (image.channels() == 1) {
     cv_image_gray_.create(image.size(), CV_8UC1);
     image.copyTo(cv_image_gray_);
@@ -114,28 +114,28 @@ vector<Box2D3D> Faces::detectAllFaces(cv::Mat &image, double threshold,
 
   cam_model_ = cam_model;
   cloud_ = cloud;
- 
+
   // look at the depth of the middle point of the depth cloud, which we hope corresponds to the middle point of the image
-  
+
   //wheeee!  cloud has 307200 points! wheeeeee!
   ROS_INFO("Image size = %d X %d Number of points = %d",cam_model_->height(), cam_model_->width(), cloud.size());
   // for (int y = 0; y < cam_model_->height(); y++) {
   //   for (int x = 0; x < cam_model_->width(); x++) {
-  //     cout << "(" << cloud_(x, y).x << " " << cloud_(x, y).y 
+  //     cout << "(" << cloud_(x, y).x << " " << cloud_(x, y).y
   // 	   << " " << cloud_(x, y).z << ") ";
   //   }
   //   cout << "\n";
   // }
-	
+
 
   // //this should *definitely* be linear interpolation or something smarter!
-  // for (unsigned int index = 0; 
+  // for (unsigned int index = 0;
   //      index < cam_model_->width()*cam_model_->height(); index++) {
-  //   for (unsigned int curr_diff = 0; 
+  //   for (unsigned int curr_diff = 0;
   // 	 curr_diff < cam_model_->width()*cam_model_->height(); curr_diff++) {
   //     if ((index + curr_diff) < cam_model_->width()*cam_model_->height()
   // 	  && depthMap_[index + curr_diff].z < 1e8) {
-  // 	//ROS_INFO("Replacing %d with %d", 
+  // 	//ROS_INFO("Replacing %d with %d",
   // 	//	 index, index+curr_diff);
   // 	depthMap_[index] = depthMap_[index + curr_diff];
   // 	break;
@@ -147,7 +147,7 @@ vector<Box2D3D> Faces::detectAllFaces(cv::Mat &image, double threshold,
   //     }
   //   }
   // }
-  
+
   // Tell the face detection threads that they can run once.
   num_threads_to_wait_for_ = threads_.size();
   boost::mutex::scoped_lock fgmlock(*(face_go_mutex_));
@@ -159,7 +159,7 @@ vector<Box2D3D> Faces::detectAllFaces(cv::Mat &image, double threshold,
   boost::mutex::scoped_lock fdmlock(face_done_mutex_);
   while (num_threads_to_wait_for_ > 0) {
     face_detection_done_cond_.wait(fdmlock);
-  }  
+  }
 
   return faces_;
 }
@@ -197,8 +197,8 @@ void Faces::faceDetectionThread(uint i) {
     ROS_INFO("Minimum face size: %d", this_min_face_size);
 
     std::vector<cv::Rect> faces_vec;
-    cascade_.detectMultiScale(cv_image_gray_, faces_vec,  
-			      1.2, 2, CV_HAAR_DO_CANNY_PRUNING, 
+    cascade_.detectMultiScale(cv_image_gray_, faces_vec,
+			      1.2, 2, CV_HAAR_DO_CANNY_PRUNING,
 			      cv::Size(this_min_face_size,
 				       this_min_face_size));
 
@@ -212,7 +212,7 @@ void Faces::faceDetectionThread(uint i) {
     for (uint iface = 0; iface < faces_vec.size(); iface++) {//face_seq->total; iface++) {
 
       one_face.status = "good";
-      
+
       //so... now i want to know
       //what points in the point cloud I have
       //correspond to this box?
@@ -223,23 +223,23 @@ void Faces::faceDetectionThread(uint i) {
 
       //we take the middle of the box
       //and find the approximate size of it
-      
+
       int startx = floor(one_face.box2d.x + 0.25*one_face.box2d.width) + 1;
       int starty = floor(one_face.box2d.y + 0.25*one_face.box2d.height) + 1;
       int endx = floor(one_face.box2d.x + 0.75*one_face.box2d.width) + 1;
       int endy = floor(one_face.box2d.y + 0.75*one_face.box2d.height) + 1;
 
 
-      // ROS_INFO("startx = %d, endx = %d, starty = %d, endy = %d", 
+      // ROS_INFO("startx = %d, endx = %d, starty = %d, endy = %d",
       // 	       startx, endx, starty, endy);
 
       //figure out the approximate dimensions of the face
-      //the point cloud is indexed with (0, 0) in the bottom left 
+      //the point cloud is indexed with (0, 0) in the bottom left
       //corner (often images are indexed with (0, 0) in the
       //top left so this is important to know)
-      
+
       //average depth
-      double depth = 0, avgx = 0, avgy = 0; 
+      double depth = 0, avgx = 0, avgy = 0;
       int npts = 0;
       for (int i = startx; i < endx; i++) {
 	for (int j = starty; j < endy; j++) {
@@ -270,28 +270,28 @@ void Faces::faceDetectionThread(uint i) {
 	for (int i = startx; i < endx; i++) {
 	  for (int j = starty; j < endy; j++) {
 	    if (!isnan(cloud_(i, j).z)) {
-	      std_depth = (100*cloud_(i, j).z - mean_depth)*(100*cloud_(i, j).z - mean_depth); 
+	      std_depth = (100*cloud_(i, j).z - mean_depth)*(100*cloud_(i, j).z - mean_depth);
 	    }
 	  }
 	}
 	std_depth /= (double)npts;
 	std_depth = sqrt(std_depth);
-	if (one_face.center3d.z > max_face_z_m_ || 
+	if (one_face.center3d.z > max_face_z_m_ ||
 	    //this doesn't work as well as might be hoped
 	    //fabs(std_depth) < FACE_SIZE_MIN_DEV_CM ||
-      	    2.0*one_face.radius3d < face_size_min_m_ || 
+      	    2.0*one_face.radius3d < face_size_min_m_ ||
       	    2.0*one_face.radius3d > face_size_max_m_) {
       	  one_face.status = "bad";
       	}
 	ROS_INFO("height = %lf, width = %lf, depth = %lf, radius = %lf, std_depth = %lf, avgx = %lf, avgy = %lf, startx = %d, endx=%d, starty=%d, endy=%d",
 		 height, width, depth, one_face.radius3d, std_depth, avgx, avgy, startx, endx, starty, endy);
       } else {
-      	one_face.radius3d = 0.0;     
+      	one_face.radius3d = 0.0;
       	one_face.center3d = cv::Point3d(0.0,0.0,0.0);
       	one_face.status = "unknown";
       }
-      
-      // ROS_INFO("ul = (%lf %lf %lf), ur = (%lf %lf %lf) ll = (%lf %lf %lf) lr = (%lf %lf %lf)", ul.x, ul.y, ul.z, ur.x, ur.y, ur.x, 
+
+      // ROS_INFO("ul = (%lf %lf %lf), ur = (%lf %lf %lf) ll = (%lf %lf %lf) lr = (%lf %lf %lf)", ul.x, ul.y, ul.z, ur.x, ur.y, ur.x,
       // 	       ll.x, ll.y, ll.z, lr.x, lr.y, lr.z);
 
       // if (ul.z < 1e8 && ur.z < 1e8 && ll.z < 1e8 && lr.z < 1e8
@@ -303,17 +303,17 @@ void Faces::faceDetectionThread(uint i) {
       // 		 one_face.center3d.x, one_face.center3d.y, one_face.center3d.z,
       // 		 one_face.radius3d,
       // 		 max_face_z_m_, face_size_min_m_, face_size_max_m_);
-      //  	if (one_face.center3d.z > max_face_z_m_ || 
-      // 	    2.0*one_face.radius3d < face_size_min_m_ || 
+      //  	if (one_face.center3d.z > max_face_z_m_ ||
+      // 	    2.0*one_face.radius3d < face_size_min_m_ ||
       // 	    2.0*one_face.radius3d > face_size_max_m_) {
       // 	  one_face.status = "bad";
       // 	}
       //} else {
-      	// one_face.radius3d = 0.0;     
+      	// one_face.radius3d = 0.0;
       	// one_face.center3d = cv::Point3d(0.0,0.0,0.0);
       	// one_face.status = "unknown";
 	//}
-      
+
       //Add faces to the output vector.
       //lock faces
       boost::mutex::scoped_lock lock(face_mutex_);
@@ -330,9 +330,9 @@ void Faces::faceDetectionThread(uint i) {
 
 void Faces::project3dToPixel(const cv::Point3d &xyz,
 			     cv::Point2d &uv_rect) const {
-  uv_rect.x = (cam_model_->fx()*xyz.x + cam_model_->Tx()) / 
+  uv_rect.x = (cam_model_->fx()*xyz.x + cam_model_->Tx()) /
     xyz.z + cam_model_->cx();
-  uv_rect.y = (cam_model_->fy()*xyz.y + cam_model_->Ty()) / 
+  uv_rect.y = (cam_model_->fy()*xyz.y + cam_model_->Ty()) /
     xyz.z + cam_model_->cy();
 }
 };
