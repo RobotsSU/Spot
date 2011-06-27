@@ -1,0 +1,6 @@
+#goal
+---
+#result - the centers of the balls we're detecting
+geometry_msgs/PoseArray centers
+---
+#feedback
