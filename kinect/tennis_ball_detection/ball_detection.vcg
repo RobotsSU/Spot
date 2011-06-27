@@ -1,7 +1,7 @@
 Background\ ColorR=0.0941176
 Background\ ColorG=0
 Background\ ColorB=0.466667
-Fixed\ Frame=/odom
+Fixed\ Frame=/openni_rgb_optical_frame
 Target\ Frame=<Fixed Frame>
 Grid.Alpha=0.5
 Grid.Cell\ Size=0.5
@@ -20,6 +20,7 @@ Grid.Plane\ Cell\ Count=10
 Grid.Reference\ Frame=<Fixed Frame>
 Markers.Enabled=1
 Markers.Marker\ Topic=ball_markers
+Markers.ball_detection=1
 Point\ Cloud2.Alpha=1
 Point\ Cloud2.Billboard\ Size=0.01
 Point\ Cloud2.Color\ Transformer=RGB8
@@ -46,51 +47,20 @@ Point\ Cloud2..IntensityMin\ ColorR=0
 Point\ Cloud2..IntensityMin\ ColorG=0
 Point\ Cloud2..IntensityMin\ ColorB=0
 Point\ Cloud2..IntensityMin\ Intensity=0
-Robot\ Model.Alpha=1
-Robot\ Model.Collision\ Enabled=0
-Robot\ Model.Enabled=1
-Robot\ Model.Robot\ Description=robot_description
-Robot\ Model.TF\ Prefix=
-Robot\ Model.Update\ Interval=0
-Robot\ Model.Visual\ Enabled=1
-Robot\:\ Robot\ Model\ Link\ SICK_laserShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ SICK_laserShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ kinect_baseShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ kinect_baseShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ kinect_headShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ kinect_headShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ kinect_postShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ kinect_postShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ left_gripperShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ left_gripperShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ left_wheelShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ left_wheelShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ main_bodyShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ main_bodyShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ moving_barShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ moving_barShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ right_gripperShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ right_gripperShow\ Trail=0
-Robot\:\ Robot\ Model\ Link\ right_wheelShow\ Axes=0
-Robot\:\ Robot\ Model\ Link\ right_wheelShow\ Trail=0
 Tool\ 2D\ Nav\ GoalTopic=goal
 Tool\ 2D\ Pose\ EstimateTopic=initialpose
 Camera\ Type=rviz::OrbitViewController
-Camera\ Config=1.15779 3.76081 6.53451 0 0 0
-Property\ Grid\ State=selection=Point Cloud2.Enabled;expanded=.Global Options,Grid.Enabled,Robot Model.Enabled,Markers.Enabled,Markers.Enabled.Markers.Namespaces,Point Cloud2.Enabled;scrollpos=0,19;splitterpos=173,332;ispageselected=1
+Camera\ Config=1.20779 3.76081 3.20136 0.140064 0.937117 0.51102
+Property\ Grid\ State=selection=;expanded=.Global Options,Grid.Enabled,Markers.Enabled,Markers.Enabled.Markers.Namespaces,Point Cloud2.Enabled,Point Cloud2.Enabled.Point Cloud2.StatusTopStatus;scrollpos=0,6;splitterpos=174,332;ispageselected=1
 [Display0]
 Name=Grid
 Package=rviz
 ClassName=rviz::GridDisplay
 [Display1]
-Name=Robot Model
-Package=rviz
-ClassName=rviz::RobotModelDisplay
-[Display2]
 Name=Markers
 Package=rviz
 ClassName=rviz::MarkerDisplay
-[Display3]
+[Display2]
 Name=Point Cloud2
 Package=rviz
 ClassName=rviz::PointCloud2Display
