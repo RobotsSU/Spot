@@ -48,7 +48,8 @@
 
 #include <people_msgs/PositionMeasurement.h>
 #include <message_filters/subscriber.h>
-#include <message_filters/time_synchronizer.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 #include <image_transport/subscriber_filter.h>
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/Image.h"
@@ -77,6 +78,12 @@ namespace people {
 /** FaceDetector - A wrapper around OpenCV's face detection, plus some usage of depth from stereo to restrict the results based on plausible face size.
  */
 class FaceDetector {
+
+  typedef 
+  message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
+						 sensor_msgs::CameraInfo,
+						 sensor_msgs::PointCloud2> 
+  MySyncPolicy;
 public:
   // Constants
   const double BIGDIST_M;// = 1000000.0;
@@ -92,19 +99,17 @@ public:
   sensor_msgs::CvBridge bridge_; /**< ROS->OpenCV bridge for the image. */
   //synchronize the messages so that we get the point cloud corresponding
   //to the image
-  message_filters::TimeSynchronizer<sensor_msgs::Image, 
-				    sensor_msgs::CameraInfo,
-				    sensor_msgs::PointCloud2> sync_;
+  message_filters::Synchronizer<MySyncPolicy> sync_;
   
 
   // Action
-  actionlib::SimpleActionServer<face_detector::FaceDetectorAction> as_;
+  //actionlib::SimpleActionServer<face_detector::FaceDetectorAction> as_;
   face_detector::FaceDetectorFeedback feedback_;
   face_detector::FaceDetectorResult result_;
 
   // If running the face detector as a component in part of a larger person tracker, this subscribes to the tracker's position measurements and whether it was initialized by some other node. 
   // Todo: resurrect the person tracker.
-  ros::Subscriber pos_sub_;
+  ros::Subscriber pos_sub_, silly_sub_, silly_info_sub_, silly_cloud_sub_;
   bool external_init_; 
   int curr_id_;
 
@@ -152,22 +157,17 @@ public:
     BIGDIST_M(1000000.0),
     it_(nh_),
     sync_(3),
-    as_(nh_,name),
+    //as_(nh_,name),
     faces_(0),
     quit_(false)
   {
     ROS_INFO_STREAM_NAMED("face_detector","Constructing FaceDetector.");
     
-    if (do_display_ == "local") {
-      // OpenCV: pop up an OpenCV highgui window
-      cv::namedWindow("Face detector: Face Detection", CV_WINDOW_AUTOSIZE);
-    }
-
     curr_id_ = 0;
 
     // Action stuff
-    as_.registerGoalCallback(boost::bind(&FaceDetector::goalCB, this));
-    as_.registerPreemptCallback(boost::bind(&FaceDetector::preemptCB, this));
+    //as_.registerGoalCallback(boost::bind(&FaceDetector::goalCB, this));
+    //as_.registerPreemptCallback(boost::bind(&FaceDetector::preemptCB, this));
     
     faces_ = new Faces();
     double face_size_min_m, face_size_max_m, max_face_z_m, face_sep_dist_m;
@@ -180,7 +180,7 @@ public:
     local_nh.param("do_display",do_display_,std::string("none"));
     local_nh.param("do_continuous",do_continuous_,true);
     local_nh.param("do_publish_faces_of_unknown_size",do_publish_unknown_,false);
-    local_nh.param("use_depth",use_depth_,true); //for now!
+    local_nh.param("use_depth",use_depth_,true);
     local_nh.param("use_external_init",external_init_,false);
     local_nh.param("face_size_min_m",face_size_min_m,Faces::FACE_SIZE_MIN_M);
     local_nh.param("face_size_max_m",face_size_max_m,Faces::FACE_SIZE_MAX_M);
@@ -191,14 +191,21 @@ public:
 			      face_size_max_m, 
 			      max_face_z_m, face_sep_dist_m);
 
+    if (do_display_ == "local") {
+      // OpenCV: pop up an OpenCV highgui window
+      ROS_INFO("Local display should open!");
+      cv::namedWindow("Face detector: Face Detection", CV_WINDOW_AUTOSIZE);
+    }
+
+
     // Subscribe to the images and camera parameters
-    image_sub_.subscribe(it_,"/kinect/rgb/image_rect_color",3);
-    info_sub_.subscribe(nh_,"/kinect/rgb/camera_info",3);
-    cloud_sub_.subscribe(nh_,"/kinect/depth/points2",3);
+    image_sub_.subscribe(it_,"/camera/rgb/image_color",2);
+    info_sub_.subscribe(nh_,"/camera/rgb/camera_info",3);
+    cloud_sub_.subscribe(nh_,"/camera/rgb/points",3);
     sync_.connectInput(image_sub_, info_sub_, cloud_sub_),
     sync_.registerCallback(boost::bind(&FaceDetector::imageCBAll, 
 				       this, _1, _2, _3));
-
+    ROS_INFO("Registered callback");
     // Advertise a position measure message.
     pos_pub_ = nh_.advertise<people_msgs::PositionMeasurement>
       ("face_detector/people_tracker_measurements",1);
@@ -212,8 +219,13 @@ public:
     image_pub_ = nh_.advertise<sensor_msgs::Image>
       ("face_detector/faces_image", 0);
 
+    //silly_sub_ = nh_.subscribe("/camera/rgb/image_color", 1, &FaceDetector::sillyCB, this);
+    //silly_info_sub_ = nh_.subscribe("/camera/rgb/camera_info", 1, &FaceDetector::sillyInfoCB, this);
+    //silly_cloud_sub_ = nh_.subscribe("/camera/rgb/points", 1, &FaceDetector::sillyCloudCB, this);
+
     // Subscribe to filter measurements.
     if (external_init_) {
+      ROS_INFO("Using an external init");
       pos_sub_ = nh_.subscribe
 	("people_tracker_filter",1,&FaceDetector::posCallback,this);
       ROS_INFO_STREAM_NAMED
@@ -239,12 +251,12 @@ public:
 
   void goalCB() {
     ROS_INFO("Face detector action started.");
-    as_.acceptNewGoal();
+    //as_.acceptNewGoal();
   }
 
   void preemptCB() {
     ROS_INFO("Face detector action preempted.");
-    as_.setPreempted();
+    //as_.setPreempted();
   }
 
 
@@ -281,6 +293,18 @@ public:
   };
 
 
+  void sillyCB(const sensor_msgs::Image::ConstPtr &image) {
+    ROS_INFO("Saw an image at time %lf!", image->header.stamp.toSec());
+  }
+
+  void sillyInfoCB(const sensor_msgs::CameraInfo::ConstPtr &cinfo) {
+    ROS_INFO("Got some info at time %lf!", cinfo->header.stamp.toSec());
+  }
+
+  void sillyCloudCB(const sensor_msgs::PointCloud2::ConstPtr &cloud) {
+    ROS_INFO("Saw a cloud at time %lf!", cloud->header.stamp.toSec());
+  }
+
   /*! 
    * \brief Image callback for synced messages. 
    *
@@ -289,12 +313,13 @@ public:
    * (if requested) draw rectangles around the found faces.
    * Can also compute which faces are associated (by proximity, currently) with faces it already has in its list of people.
    */
+
   void imageCBAll(const sensor_msgs::Image::ConstPtr &image, 
-		  const sensor_msgs::CameraInfo::ConstPtr& cinfo,
-		  const sensor_msgs::PointCloud2::ConstPtr& incloud) {
+		   const sensor_msgs::CameraInfo::ConstPtr& cinfo,
+		   const sensor_msgs::PointCloud2::ConstPtr& incloud) {
 
     // Only run the detector if in continuous mode or the detector was turned on through an action invocation.
-    if (!do_continuous_ && !as_.isActive())
+    if (!do_continuous_) // && !as_.isActive())
       return;
 
     if (do_display_ == "local") {
@@ -372,7 +397,8 @@ public:
       for (uint iface = 0; iface < faces_vector.size(); iface++) {
 	one_face = &faces_vector[iface];
 	  
-	if (one_face->status=="good" || (one_face->status=="unknown" && do_publish_unknown_)) {
+	if (one_face->status=="good" || 
+	    (one_face->status=="unknown" && do_publish_unknown_)) {
 
 	  std::string id = "";
 
@@ -510,9 +536,9 @@ public:
 
 
     // If you don't want continuous processing and you've found at least one face, turn off the detector.
-    if (!do_continuous_ && found_faces) {
-      as_.setSucceeded(result_);
-    }
+    // if (!do_continuous_ && found_faces) {
+//       as_.setSucceeded(result_);
+//     }
 
 
   }

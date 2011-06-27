@@ -1,0 +1,8 @@
+<launch>
+	<!-- start the detector and harriet model -->
+	<include file="$(find tennis_ball_detection)/launch/ball_detector_no_display.launch"/>
+
+	<!-- start rviz to see the model, use the rviz parameters file for the model -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find tennis_ball_detection)/ball_detection.vcg" />
+
+</launch>

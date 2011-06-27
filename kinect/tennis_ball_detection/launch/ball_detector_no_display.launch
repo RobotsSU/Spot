@@ -1,0 +1,9 @@
+<launch>
+	<!-- start the ball detector with some fun parameters -->
+	<node pkg="tennis_ball_detection" type="ball_detector" name="ball_detector_node" output="screen">
+	      <param name="display" type="string" value="local"/>
+	      <!--Use this parameter to output the ball centers in any frame TF knows about-->
+	      <param name="ball_output_frame" type="string" value=""/>
+	      <param name="do_continuous" type="bool" value="true"/>
+	</node>
+</launch>

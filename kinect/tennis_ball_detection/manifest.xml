@@ -1,0 +1,26 @@
+<package>
+  <description brief="tennis_ball_detection">
+
+     tennis_ball_detection
+
+  </description>
+  <author>Jenny</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/tennis_ball_detection</url>
+  <depend package="pcl"/>
+  <depend package="sensor_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="image_transport"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="tf"/>
+  <depend package="geometry_msgs"/>
+  <depend package="image_geometry"/>
+  <depend package="actionlib"/>
+  <depend package="actionlib_msgs"/>
+  <depend package="visualization_msgs"/>
+
+</package>
+
+
